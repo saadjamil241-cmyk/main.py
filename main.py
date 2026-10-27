@@ -4,10 +4,10 @@ import os
 from pathlib import Path
 from typing import Literal
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
-from openai import OpenAI, OpenAIError
+from openai import AuthenticationError, OpenAI, OpenAIError, RateLimitError
 from pydantic import BaseModel, Field
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -54,13 +54,17 @@ def index() -> FileResponse:
 
 @app.post("/api/analyze")
 def analyze(request: CodeRequest) -> dict:
+    """Return {"result": ...} on success, {"error": ...} when the model call fails.
+
+    Failures travel in a 200 body on purpose: the preview proxy swaps any 5xx
+    response body for its own error page, which would hide the reason from the UI.
+    """
     api_key = os.getenv("OPENAI_API_KEY")
     if not api_key:
-        raise HTTPException(
-            status_code=503,
-            detail="OPENAI_API_KEY is not configured. Add it in your app's secrets, "
-            "then try again.",
-        )
+        return {
+            "error": "OPENAI_API_KEY is not configured. Add it in your app's secrets, "
+            "then try again."
+        }
 
     language = (
         "" if request.language == "auto" else f"The code is written in {request.language}.\n\n"
@@ -77,8 +81,14 @@ def analyze(request: CodeRequest) -> dict:
             messages=messages,
             temperature=0.2,
         )
+    except AuthenticationError:
+        return {"error": "OpenAI rejected the API key. Check the OPENAI_API_KEY secret."}
+    except RateLimitError:
+        return {
+            "error": "OpenAI quota exceeded — add credits to your OpenAI account, then try again."
+        }
     except OpenAIError as exc:
-        raise HTTPException(status_code=502, detail=f"OpenAI request failed: {exc}")
+        return {"error": f"OpenAI request failed: {exc}"}
 
     return {
         "mode": request.mode,

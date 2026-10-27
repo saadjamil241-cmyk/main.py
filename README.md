@@ -30,3 +30,5 @@ Then open http://localhost:3000.
 ```
 
 `mode` is one of `analyze`, `debug`, `optimize`, `explain`. `language` is optional (`auto` by default).
+
+The response is `{"mode","model","result"}` on success, or `{"error": "…"}` with HTTP 200 when the model call fails (missing key, quota, bad key). Errors intentionally use a 200 body: the preview proxy replaces 5xx bodies with its own error page.

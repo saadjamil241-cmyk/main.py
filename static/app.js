@@ -86,8 +86,8 @@ async function run() {
 
     const payload = await response.json().catch(() => ({}));
 
-    if (!response.ok) {
-      const message = payload.detail || `Request failed (${response.status})`;
+    if (!response.ok || payload.error) {
+      const message = payload.error || payload.detail || `Request failed (${response.status})`;
       setBanner(message);
       resultEl.classList.remove("is-loading");
       resultEl.classList.add("is-empty");

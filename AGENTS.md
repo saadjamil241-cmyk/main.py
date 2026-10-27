@@ -19,4 +19,4 @@ curl -s -X POST http://localhost:3000/api/analyze \
   -d '{"code":"def add(a,b): return a-b","mode":"debug"}'
 ```
 
-Without a configured key the POST returns `503` with the "OPENAI_API_KEY is not configured" detail — that is the expected unconfigured behaviour, not a bug. With a key it returns `{"mode","model","result"}`.
+`/api/analyze` answers HTTP 200 with `{"mode","model","result"}` on success or `{"error": "…"}` when the model call fails (missing key, invalid key, no OpenAI credits). Do not "fix" this by raising a 5xx: the preview proxy swaps 5xx bodies for its own "Preview starting…" error page, so the UI would only ever see a generic message.
