@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Star.AI — AI code assistant</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div id="banner" class="banner hidden" role="alert">
+      <span id="banner-text"></span>
+      <button id="banner-close" class="banner-close" aria-label="Dismiss">×</button>
+    </div>
+
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">✦</span>
+        <h1>Star.AI</h1>
+        <span class="brand-tag">AI code assistant</span>
+      </div>
+      <span id="model-badge" class="badge">gpt-4o-mini</span>
+    </header>
+
+    <main class="workspace">
+      <section class="panel">
+        <div class="panel-head">
+          <h2>Your code</h2>
+          <span id="char-count" class="muted">0 / 20000</span>
+        </div>
+        <textarea
+          id="code"
+          spellcheck="false"
+          autocomplete="off"
+          placeholder="Paste a function, a file, or an error trace…"
+        ></textarea>
+        <div class="controls">
+          <div class="modes" role="group" aria-label="Action">
+            <button class="chip is-active" data-mode="analyze" type="button">Analyze</button>
+            <button class="chip" data-mode="debug" type="button">Debug</button>
+            <button class="chip" data-mode="optimize" type="button">Optimize</button>
+            <button class="chip" data-mode="explain" type="button">Explain</button>
+          </div>
+          <button id="run" class="primary" type="button">Run</button>
+        </div>
+        <p class="hint">Ctrl / ⌘ + Enter to send</p>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <h2>Response</h2>
+          <span id="status" class="muted"></span>
+        </div>
+        <div id="result" class="result is-empty">
+          Paste some code, choose an action, and hit Run — I'll review it.
+        </div>
+      </section>
+    </main>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,12 @@
+{
+  "previewPort": 3000,
+  "healthPath": "/",
+  "startCommand": "docker compose -f docker-compose.base44.yml up -d",
+  "secrets": [
+    {
+      "name": "OPENAI_API_KEY",
+      "description": "OpenAI API key used to generate code reviews (create one at platform.openai.com -> API keys). Without it the app still loads, but every request returns a 'key not configured' message.",
+      "requiredAtBoot": false
+    }
+  ]
+}
